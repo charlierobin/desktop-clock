@@ -10,7 +10,7 @@ Begin Window WindowMain
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   446
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -23,8 +23,8 @@ Begin Window WindowMain
    Title           =   "Untitled"
    Type            =   4
    Visible         =   True
-   Width           =   600
-   Begin Timer Timer1
+   Width           =   534
+   Begin Timer TimerDateTime
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
@@ -66,7 +66,7 @@ Begin Window WindowMain
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   494
    End
    Begin Label LabelTime
       AllowAutoDeactivate=   True
@@ -101,7 +101,76 @@ Begin Window WindowMain
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   560
+      Width           =   494
+   End
+   Begin Timer TimerCalendar
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   2
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin ContainerCalendarEntry ContainerCalendarEntry1
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   74
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   211
+      Transparent     =   True
+      Visible         =   True
+      Width           =   534
+   End
+   Begin ContainerCalendarEntry ContainerCalendarEntry2
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   74
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   297
+      Transparent     =   True
+      Visible         =   True
+      Width           =   534
    End
 End
 #tag EndWindow
@@ -142,9 +211,9 @@ End
 		Sub Open()
 		  self.makeWindowTransparent()
 		  
-		  // self.setLevel( NSDesktopWindowLevel )
+		  self.timerMethodForDateTime()
 		  
-		  self.timerMethod()
+		  self.timerMethodForCalendar()
 		  
 		  
 		End Sub
@@ -152,7 +221,64 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub timerMethod()
+		Private Sub timerMethodForCalendar()
+		  // https://discussions.apple.com/thread/2008128
+		  
+		  var pathToDB as String = "/Users/charlie/Library/Calendars/Calendar Cache"
+		  
+		  var f as FolderItem = new FolderItem( pathToDB, FolderItem.PathModes.Native )
+		  
+		  If f.Exists Then
+		    
+		    var db as SQLiteDatabase = new SQLiteDatabase( f )
+		    
+		    if db.Connect then
+		      
+		      // date works in seconds from 1970, whereas iCal works from 2001 - ZSTARTDATE, ZENDDATE, ZDUEDATE
+		      
+		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day )
+		      
+		      var startRange as Double = thisDay.SecondsFrom1970
+		      
+		      var iCalStart as DateTime = new DateTime( 2001, 1, 1 )
+		      
+		      startRange = startRange - iCalStart.SecondsFrom1970
+		      
+		      var endRange as Double = startRange + ( ( 60 * 60 * 24 ) * 7 )
+		      
+		      var SQL as String = "select ZSTARTDATE, ZENDDATE, ZTITLE, ZNOTES from ZCALENDARITEM where ZSTARTDATE >= ? AND ZENDDATE <= ?;"
+		      
+		      try
+		        
+		        var rs as RowSet = db.SelectSQL( SQL, startRange, endRange )
+		        
+		        for each row as DatabaseRow in rs
+		          
+		          System.DebugLog( row.Column( "ZTITLE" ).StringValue + if ( row.Column( "ZNOTES" ).StringValue <> "", ": ", "" ) + row.Column( "ZNOTES" ).StringValue.ReplaceAll( EndOfLine, " " ) )
+		          
+		        next
+		        
+		        rs.Close()
+		        
+		        db.Close()
+		        
+		      catch error as DatabaseException
+		        
+		        System.DebugLog( error.Message )
+		        
+		      end try
+		      
+		    end if
+		    
+		  end if
+		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub timerMethodForDateTime()
 		  self.LabelDate.Text = DateTime.Now().ToString( Locale.Current, DateTime.FormatStyles.Full, DateTime.FormatStyles.None )
 		  
 		  self.LabelTime.Text = DateTime.Now().ToString( Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Medium )
@@ -186,10 +312,19 @@ End
 
 #tag EndWindowCode
 
-#tag Events Timer1
+#tag Events TimerDateTime
 	#tag Event
 		Sub Action()
-		  self.timerMethod()
+		  self.timerMethodForDateTime()
+		  
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TimerCalendar
+	#tag Event
+		Sub Action()
+		  self.timerMethodForCalendar()
 		  
 		  
 		End Sub

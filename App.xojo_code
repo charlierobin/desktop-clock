@@ -5,59 +5,6 @@ Inherits Application
 		Sub Open()
 		  WindowMain.Show()
 		  
-		  // https://discussions.apple.com/thread/2008128
-		  
-		  var pathToDB as String = "/Users/charlie/Library/Calendars/Calendar Cache"
-		  
-		  var f as FolderItem = new FolderItem( pathToDB, FolderItem.PathModes.Native )
-		  
-		  If f.Exists Then
-		    
-		    var db as SQLiteDatabase = new SQLiteDatabase( f )
-		    
-		    if db.Connect then
-		      
-		      // date works in seconds from 1970, whereas iCal works from 2001
-		      
-		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day )
-		      
-		      var startRange as Double = thisDay.SecondsFrom1970
-		      
-		      var iCalStart as DateTime = new DateTime( 2001, 1, 1 )
-		      
-		      startRange = startRange - iCalStart.SecondsFrom1970
-		      
-		      var endRange as Double = startRange + ( ( 60 * 60 * 24 ) * 7 )
-		      
-		      var SQL as String = "select ZSTARTDATE, ZENDDATE, ZTITLE, ZNOTES from ZCALENDARITEM where ZSTARTDATE >= ? AND ZENDDATE <= ?;"
-		      
-		      // ZENDDATE, ZDUEDATE
-		      
-		      try
-		        
-		        var rs as RowSet = db.SelectSQL( SQL, startRange, endRange )
-		        
-		        for each row as DatabaseRow in rs
-		          
-		          System.DebugLog( row.Column( "ZTITLE" ).StringValue + if ( row.Column( "ZNOTES" ).StringValue <> "", ": ", "" ) + row.Column( "ZNOTES" ).StringValue )
-		          
-		        next
-		        
-		        rs.Close()
-		        
-		        db.Close()
-		        
-		      catch error as DatabaseException
-		        
-		        System.DebugLog( error.Message )
-		        
-		      end try
-		      
-		    end if
-		    
-		  end if
-		  
-		  
 		  
 		End Sub
 	#tag EndEvent

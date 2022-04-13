@@ -23,7 +23,42 @@ Begin Window WindowMain
    Title           =   "Untitled"
    Type            =   4
    Visible         =   True
-   Width           =   534
+   Width           =   360
+   Begin Label LabelTime
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "Arial Black"
+      FontSize        =   96.0
+      FontUnit        =   0
+      Height          =   192
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Time"
+      TextAlignment   =   2
+      TextColor       =   &cFFFFFF00
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   320
+   End
    Begin Timer TimerDateTime
       Enabled         =   True
       Index           =   -2147483648
@@ -66,42 +101,7 @@ Begin Window WindowMain
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   494
-   End
-   Begin Label LabelTime
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "Arial Black"
-      FontSize        =   96.0
-      FontUnit        =   0
-      Height          =   192
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Time"
-      TextAlignment   =   2
-      TextColor       =   &cFFFFFF00
-      Tooltip         =   ""
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   494
+      Width           =   320
    End
    Begin Timer TimerCalendar
       Enabled         =   True
@@ -135,7 +135,7 @@ Begin Window WindowMain
       TopLeftColor    =   &c00000000
       Transparent     =   False
       Visible         =   True
-      Width           =   534
+      Width           =   360
    End
 End
 #tag EndWindow
@@ -328,11 +328,34 @@ End
 		  
 		  me.LabelTime.Text = DateTime.Now().ToString( Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Medium )
 		  
+		  if me.p is nil then me.p = new Picture( 1, 1 )
+		  
+		  if me.g is nil then me.g = me.p.Graphics
+		  
+		  me.g.FontName = me.LabelDate.FontName
+		  
+		  me.g.FontUnit = me.LabelDate.FontUnit
+		  
+		  me.g.FontSize = me.LabelDate.FontSize
+		  
+		  var width as Double = me.g.TextWidth( me.LabelDate.Text )
+		  
+		  me.g.FontName = me.LabelTime.FontName
+		  
+		  me.g.FontUnit = me.LabelTime.FontUnit
+		  
+		  me.g.FontSize = me.LabelTime.FontSize
+		  
+		  var width2 as Double = me.g.TextWidth( me.LabelTime.Text )
+		  
+		  me.Width = if ( width2 > width, width2 + kWidthExtraMargin, width + kWidthExtraMargin )
+		  
 		  // me.LabelTime.Text = DateTime.Now().ToString( "yyyy.MM.dd G 'at' HH:mm:ss zzz" )
+		  
+		  // https://unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns
 		  
 		  me.invalidateShadow()
 		  
-		  // https://unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns
 		  
 		End Sub
 	#tag EndMethod
@@ -401,11 +424,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private g As Graphics
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private lastX As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private lastY As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private p As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -415,6 +446,10 @@ End
 	#tag Property, Flags = &h21
 		Private startY As Integer
 	#tag EndProperty
+
+
+	#tag Constant, Name = kWidthExtraMargin, Type = Double, Dynamic = False, Default = \"40", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode

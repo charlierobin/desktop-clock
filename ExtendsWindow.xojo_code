@@ -14,34 +14,22 @@ Protected Module ExtendsWindow
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub makeWindowTransparent(extends wind As Window, forceDisplay As boolean = false)
+		Sub makeWindowTransparent(extends wind As Window)
 		  if wind = nil then return
 		  
-		  const CocoaLib = "Cocoa"
+		  soft declare function NSClassFromString lib kCocoaLib ( className as CFStringRef ) as Ptr
 		  
-		  soft declare function NSClassFromString lib CocoaLib (aClassName as CFStringRef) as Ptr
-		  soft declare function colorMaker lib CocoaLib selector "colorWithCalibratedWhite:alpha:" (NSColorClass As Ptr, white As Single, alpha As Single) As Ptr
-		  soft declare sub setBGColor lib CocoaLib selector "setBackgroundColor:" (NSWindow As Ptr, backgroundColor As Ptr)
-		  soft declare sub setOpaque lib CocoaLib selector "setOpaque:" (NSWindow As Ptr, flag As Byte)
+		  soft declare function colorWithCalibratedWhite lib kCocoaLib selector "colorWithCalibratedWhite:alpha:" ( NSColorClass as Ptr, white as Single, alpha as Single ) as Ptr
 		  
-		  dim w As Ptr = Ptr(wind.Handle)
+		  soft declare sub setBackgroundColor lib kCocoaLib selector "setBackgroundColor:" ( NSWindow as Ptr, backgroundColor as Ptr )
 		  
-		  var off as Integer = 0
-		  var on as Integer = 1
+		  soft declare sub setOpaque lib kCocoaLib selector "setOpaque:" ( NSWindow as Ptr, flag as Byte )
 		  
-		  setOpaque(w, off)
+		  dim w As Ptr = Ptr( wind.Handle )
 		  
-		  setBGColor(w, colorMaker(NSClassFromString("NSColor"), 1, 0))
+		  setOpaque( w, no )
 		  
-		  if forceDisplay then
-		    
-		    soft declare sub invalidateShadow lib CocoaLib selector "invalidateShadow" (NSWindow As Ptr)
-		    soft declare sub disp lib "AppKit" selector "display" (windRef As Ptr)
-		    
-		    disp(w)
-		    invalidateShadow(w)
-		    
-		  end
+		  setBackgroundColor( w, colorWithCalibratedWhite( NSClassFromString( "NSColor" ), 1, 0 ) )
 		  
 		  
 		End Sub
@@ -90,10 +78,19 @@ Protected Module ExtendsWindow
 	#tag EndMethod
 
 
+	#tag Constant, Name = kCocoaLib, Type = String, Dynamic = False, Default = \"Cocoa", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = no, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = NSDesktopWindowLevel, Type = Double, Dynamic = False, Default = \"-2147483623", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = NSNormalWindowLevel, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = yes, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 

@@ -11,6 +11,23 @@ Inherits Application
 
 
 	#tag MenuHandler
+		Function FileColour() As Boolean Handles FileColour.Action
+			if WindowMain.colour = Color.White then
+			
+			WindowMain.colour = Color.Black
+			
+			else
+			
+			WindowMain.colour = Color.White
+			
+			end if
+			
+			return true
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ToggleWindowLevel() As Boolean Handles ToggleWindowLevel.Action
 			if me.atDeskTopLevel then
 			
@@ -36,11 +53,6 @@ Inherits Application
 		Private atDeskTopLevel As Boolean
 	#tag EndProperty
 
-
-	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"&Delete"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"&Delete"
-	#tag EndConstant
 
 	#tag Constant, Name = kFileQuit, Type = String, Dynamic = False, Default = \"&Quit", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"E&xit"

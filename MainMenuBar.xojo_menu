@@ -7,7 +7,7 @@ Begin Menu MainMenuBar
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin QuitMenuItem FileQuit
+      Begin QuitMenuItem Quit
          SpecialMenu = 0
          Index = -2147483648
          Text = "#App.kFileQuit"
@@ -35,6 +35,25 @@ Begin Menu MainMenuBar
          ShortcutKey = "C"
          Shortcut = "Cmd+C"
          MenuModifier = True
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem Close
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Close"
+         ShortcutKey = "W"
+         Shortcut = "Cmd+W"
+         MenuModifier = True
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin AppleMenuItem ShowAboutWindow
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "About"
          AutoEnabled = True
          AutoEnable = True
          Visible = True

@@ -647,11 +647,11 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="ccs()"
+		Name="colour"
 		Visible=false
 		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
+		InitialValue="&c000000"
+		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

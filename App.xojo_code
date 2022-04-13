@@ -28,6 +28,15 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function ShowAboutWindow() As Boolean Handles ShowAboutWindow.Action
+			WindowAbout.Show()
+			
+			return true
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ToggleWindowLevel() As Boolean Handles ToggleWindowLevel.Action
 			if me.atDeskTopLevel then
 			

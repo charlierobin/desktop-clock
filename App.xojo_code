@@ -3,6 +3,8 @@ Protected Class App
 Inherits Application
 	#tag Event
 		Sub Open()
+		  ShowAboutWindow.Text = "About " + me.Name
+		  
 		  WindowMain.Show()
 		  
 		  
@@ -11,16 +13,18 @@ Inherits Application
 
 
 	#tag MenuHandler
-		Function FileColour() As Boolean Handles FileColour.Action
-			if WindowMain.colour = Color.White then
+		Function DecreaseLookahead() As Boolean Handles DecreaseLookahead.Action
+			WindowMain.daysLookAhead = WindowMain.daysLookAhead - 1
 			
-			WindowMain.colour = Color.Black
+			return true
 			
-			else
 			
-			WindowMain.colour = Color.White
-			
-			end if
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function IncreaseLookahead() As Boolean Handles IncreaseLookahead.Action
+			WindowMain.daysLookAhead = WindowMain.daysLookAhead + 1
 			
 			return true
 			
@@ -30,6 +34,23 @@ Inherits Application
 	#tag MenuHandler
 		Function ShowAboutWindow() As Boolean Handles ShowAboutWindow.Action
 			WindowAbout.Show()
+			
+			return true
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ToggleColour() As Boolean Handles ToggleColour.Action
+			if WindowMain.colour = Color.White then
+			
+			WindowMain.colour = Color.Black
+			
+			else
+			
+			WindowMain.colour = Color.White
+			
+			end if
 			
 			return true
 			

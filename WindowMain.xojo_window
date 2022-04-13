@@ -214,9 +214,7 @@ End
 		  
 		  var data() as Dictionary
 		  
-		  var pathToDB as String = "/Users/charlie/Library/Calendars/Calendar Cache"
-		  
-		  var f as FolderItem = new FolderItem( pathToDB, FolderItem.PathModes.Native )
+		  var f as FolderItem = SpecialFolder.UserLibrary.Child( "Calendars" ).Child( "Calendar Cache" )
 		  
 		  if f <> nil and f.Exists then
 		    
@@ -224,9 +222,11 @@ End
 		    
 		    if db.Connect then
 		      
-		      // date works in seconds from 1970, whereas iCal works from 2001 - ZSTARTDATE, ZENDDATE, ZDUEDATE
+		      // date works in seconds from 1970, whereas iCal works from 2001for ZSTARTDATE, ZENDDATE, ZDUEDATE, etc
 		      
-		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day )
+		      // setting 0200 below allows for events that are all day, starting at 0000, but are in database as 0100 etc ... yes, it's a bodge (for now)
+		      
+		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day, 2, 0, 0 )
 		      
 		      var startRange as Double = thisDay.SecondsFrom1970
 		      
@@ -234,9 +234,9 @@ End
 		      
 		      startRange = startRange - iCalStart.SecondsFrom1970
 		      
-		      var endRange as Double = startRange + ( ( 60 * 60 * 24 ) * 4 )
+		      var endRange as Double = startRange + ( ( 60 * 60 * 24 ) * me.daysLookAhead )
 		      
-		      var SQL as String = "select ZSTARTDATE, ZENDDATE, ZTITLE, ZNOTES, ZISALLDAY from ZCALENDARITEM where ZSTARTDATE >= ? and ZENDDATE <= ? order by ZSTARTDATE asc;"
+		      var SQL as String = "select ZSTARTDATE, ZENDDATE, ZTITLE, ZNOTES, ZISALLDAY from ZCALENDARITEM where ZSTARTDATE >= ? and ZSTARTDATE <= ? order by ZSTARTDATE asc;"
 		      
 		      try
 		        
@@ -370,6 +370,34 @@ End
 
 	#tag Property, Flags = &h21
 		Private colour_m As Color
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return me.daysLookAhead_m
+			  
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  if value >= 0 then
+			    
+			    me.daysLookAhead_m = value
+			    
+			    me.timerMethodForCalendar()
+			    
+			  end if
+			  
+			  
+			End Set
+		#tag EndSetter
+		daysLookAhead As Integer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private daysLookAhead_m As Integer = 1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -652,6 +680,14 @@ End
 		Group="Behavior"
 		InitialValue="&c000000"
 		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="daysLookAhead"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

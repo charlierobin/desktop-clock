@@ -224,9 +224,9 @@ End
 		      
 		      // date works in seconds from 1970, whereas iCal works from 2001for ZSTARTDATE, ZENDDATE, ZDUEDATE, etc
 		      
-		      // setting 0200 below allows for events that are all day, starting at 0000, but are in database as 0100 etc ... yes, it's a bodge (for now)
+		      // setting 0100 below allows for events that are all day, starting at 0000, but are in database as 0100 etc ... yes, it's a bodge (for now)
 		      
-		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day, 2, 0, 0 )
+		      var thisDay as DateTime = new DateTime( DateTime.Now().Year, DateTime.Now().Month, DateTime.Now().Day, 1, 0, 0 )
 		      
 		      var startRange as Double = thisDay.SecondsFrom1970
 		      
@@ -289,9 +289,63 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub removeDuplicates(data() as Dictionary)
+		  // I have multiple calendars, and often have the same events appearing more than once, especially with public holidays etc, so this removes duplicates
+		  
+		  // same title ... ? plus the special case of same title but with " (regional holiday)" appended (UK holidays subscription)
+		  
+		  var removeAt as Integer = -1
+		  
+		  do
+		    
+		    removeAt = -1
+		    
+		    for i as Integer = 0 to data.LastIndex
+		      
+		      for j as Integer = 0 to data.LastIndex
+		        
+		        if i <> j then 
+		          
+		          if data( i ).Value( "title" ) = data( j ).Value( "title" ) then
+		            
+		            removeAt = j
+		            
+		          elseif data( i ).Value( "title" ) = data( j ).Value( "title" ) + " (regional holiday)" then
+		            
+		            removeAt = i
+		            
+		          elseif data( j ).Value( "title" ) = data( i ).Value( "title" ) + " (regional holiday)" then
+		            
+		            removeAt = j
+		            
+		          end if
+		          
+		          if removeAt > -1 then
+		            
+		            data.RemoveAt( removeAt )
+		            
+		            exit for i
+		            
+		          end if
+		          
+		        end if
+		        
+		      next
+		      
+		    next
+		    
+		  loop until removeAt = -1
+		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub timerMethodForCalendar()
 		  var data() as Dictionary = me.getEventsFromEventKit()
 		  
+		  me.removeDuplicates( data )
 		  
 		  me.clearEventsContainerControls()
 		  
@@ -303,7 +357,7 @@ End
 		    
 		    var newCC as ContainerCalendarEntry = new ContainerCalendarEntry( item )
 		    
-		    newCC.EmbedWithin( me, 0, y, me.Width )
+		    newCC.EmbedWithin( me, kCalendarItemsInset, y, me.Width - kCalendarItemsInset - kCalendarItemsInset )
 		    
 		    me.ccs.Add( newCC )
 		    
@@ -447,6 +501,9 @@ End
 		Private startY As Integer
 	#tag EndProperty
 
+
+	#tag Constant, Name = kCalendarItemsInset, Type = Double, Dynamic = False, Default = \"30", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = kWidthExtraMargin, Type = Double, Dynamic = False, Default = \"40", Scope = Private
 	#tag EndConstant

@@ -35,3 +35,6 @@ Among the more obvious bits would be:
 5. Global keyboard shortcuts that work no matter what app you are using (ie: app doesn’t have to be active in order to get keyboard commands)
 6. Running with no icon in the dock
 7. An application icon ... **what kind of app doesn’t have its own icon**?
+
+2024/12/17 - see also https://github.com/charlierobin/foretell
+

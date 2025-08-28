@@ -37,4 +37,5 @@ Among the more obvious bits would be:
 7. An application icon ... **what kind of app doesn’t have its own icon**?
 
 2024/12/17 - see also https://github.com/charlierobin/foretell
+
 2025/08/28 - downloads now from [Releases](https://github.com/charlierobin/desktop-clock/releases)

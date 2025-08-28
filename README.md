@@ -14,7 +14,7 @@ The way in which it accesses calendars is pretty hacky. I always wanted to updat
 
 If you don’t fancy compiling yourself and just wanted the prebuilt app, there’s a universal (Intel/ARM) binary available for download from here:
 
-[Desktop Clock universal binary disk image](https://dl.dropboxusercontent.com/s/s8jz3gdcnt1h1fv/DesktopClock.dmg.zip?dl=0)
+~~Desktop Clock universal binary disk image~~ dead link - see below
 
 The app itself is very simple:
 
@@ -37,4 +37,4 @@ Among the more obvious bits would be:
 7. An application icon ... **what kind of app doesn’t have its own icon**?
 
 2024/12/17 - see also https://github.com/charlierobin/foretell
-
+2025/08/28 - downloads now from [Releases](https://github.com/charlierobin/desktop-clock/releases)
